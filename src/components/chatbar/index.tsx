@@ -1,3 +1,5 @@
+import { IoIosCall, IoIosSearch, IoIosMore } from 'react-icons/io'
+
 function ChatBar() {
 
     var users = [
@@ -14,9 +16,9 @@ function ChatBar() {
             <div className="flex h-8 justify-between">
                 <p>Contacts</p>
                 <div className="flex gap-1">
-                    <div className="border-white rounded-2xl border-2 h-full w-8 flex items-center justify-center p-1">Call</div>
-                    <div className="border-white rounded-2xl border-2 h-full w-8 flex items-center justify-center p-1">Search</div>
-                    <div className="border-white rounded-2xl border-2 h-full w-8 flex items-center justify-center p-1">...</div>
+                    <Button button={<IoIosCall />} />
+                    <Button button={<IoIosSearch />} />
+                    <Button button={<IoIosMore />} />
                 </div>
             </div>
             <div className="flex flex-col">
@@ -24,13 +26,21 @@ function ChatBar() {
                     users.map((user) => {
                         return (
                             <div className="h-14 flex justify-start items-center">
-                                <div className="border-white rounded-2xl border-2 h-9 w-9 flex items-center justify-center p-1 mr-2">Pic</div>
+                                <div className="bg-slate-700 rounded-2xl h-9 w-9 flex items-center justify-center p-1 mr-2">Pic</div>
                                 <p>{user}</p>
                             </div>
                         )
                     })
                 }
             </div>
+        </div>
+    )
+}
+
+const Button = ({ button }: { button: React.ReactNode }) => {
+    return (
+        <div className="bg-slate-700 rounded-2xl h-full w-8 flex items-center justify-center p-1">
+            {button}
         </div>
     )
 }

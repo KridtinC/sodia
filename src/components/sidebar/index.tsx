@@ -12,7 +12,7 @@ function SideBar() {
                     menus.map((menu) => {
                         return (
                             <div className="h-14 flex justify-start items-center">
-                                <div className="border-white rounded-2xl border-2 h-9 w-9 flex items-center justify-center p-1 mr-2">Pic</div>
+                                <div className="bg-slate-700 rounded-2xl h-9 w-9 flex items-center justify-center p-1 mr-2">Pic</div>
                                 <p>{menu}</p>
                             </div>
                         )
