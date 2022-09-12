@@ -8,4 +8,5 @@ import (
 
 type PostService interface {
 	GetPostsByUserID(ctx context.Context, userID string) ([]domain.Post, error)
+	CreatePost(ctx context.Context, post domain.Post) (domain.Post, error)
 }

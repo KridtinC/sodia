@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type repository struct {
@@ -23,7 +24,12 @@ func New(dbClient *mongo.Database) ports.PostRepository {
 
 func (p *repository) GetByUserID(ctx context.Context, userID string) ([]domain.Post, error) {
 	var results []domain.Post
-	cursor, err := p.dbCol.Find(ctx, bson.D{{Key: "user_id", Value: bson.D{{Key: "$eq", Value: userID}}}})
+
+	var (
+		filters = bson.D{{Key: "user_id", Value: bson.D{{Key: "$eq", Value: userID}}}}
+		opts    = options.Find().SetSort(bson.D{{Key: "created_date", Value: -1}})
+	)
+	cursor, err := p.dbCol.Find(ctx, filters, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -36,13 +42,13 @@ func (p *repository) GetByUserID(ctx context.Context, userID string) ([]domain.P
 	return results, nil
 }
 
-func (p *repository) CreatePost(ctx context.Context, post domain.Post) error {
+func (p *repository) CreatePost(ctx context.Context, post domain.Post) (domain.Post, error) {
 
 	post.ID = primitive.NewObjectID()
 	post.CreatedDate = time.Now()
 	_, err := p.dbCol.InsertOne(ctx, &post)
 	if err != nil {
-		return err
+		return domain.Post{}, err
 	}
-	return nil
+	return post, nil
 }

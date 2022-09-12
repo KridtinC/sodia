@@ -28,7 +28,7 @@ func TestPostRepo(t *testing.T) {
 
 		repo := New(db)
 
-		repo.CreatePost(ctx, domain.Post{UserID: "test", Content: "testfromgo"})
+		repo.CreatePost(ctx, domain.Post{UserID: "test", Content: "testfromgo", ImageURL: "https://i.picsum.photos/id/1084/536/354.jpg?grayscale&hmac=Ux7nzg19e1q35mlUVZjhCLxqkR30cC-CarVg-nlIf60"})
 
 		resp, err := repo.GetByUserID(ctx, "test")
 		assert.Equal(t, len(resp), 2)

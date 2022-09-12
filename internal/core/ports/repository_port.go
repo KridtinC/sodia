@@ -8,5 +8,5 @@ import (
 
 type PostRepository interface {
 	GetByUserID(ctx context.Context, userID string) ([]domain.Post, error)
-	CreatePost(ctx context.Context, post domain.Post) error
+	CreatePost(ctx context.Context, post domain.Post) (domain.Post, error)
 }

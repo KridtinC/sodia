@@ -23,3 +23,7 @@ func (s *service) GetPostsByUserID(ctx context.Context, userID string) ([]domain
 
 	return posts, nil
 }
+
+func (s *service) CreatePost(ctx context.Context, post domain.Post) (domain.Post, error) {
+	return s.postRepository.CreatePost(ctx, post)
+}

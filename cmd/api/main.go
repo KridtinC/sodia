@@ -8,6 +8,7 @@ import (
 	"github.com/KridtinC/sodia/internal/core/services/postsvc"
 	"github.com/KridtinC/sodia/internal/handlers/apihdl"
 	"github.com/KridtinC/sodia/internal/repositories/postrepo"
+	"github.com/KridtinC/sodia/middleware"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -41,9 +42,12 @@ func main() {
 		router         = gin.Default()
 	)
 
+	router.Use(middleware.CORSMiddleware())
+	router.Use(middleware.LoggingMiddleware())
 	router.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, "ok")
 	})
 	router.GET("/posts", apihttphdl.GetPosts)
+	router.POST("/posts", apihttphdl.CreatePosts)
 	router.Run()
 }

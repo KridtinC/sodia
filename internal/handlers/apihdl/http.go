@@ -1,6 +1,10 @@
 package apihdl
 
 import (
+	"encoding/json"
+	"io"
+
+	"github.com/KridtinC/sodia/internal/core/domain"
 	"github.com/KridtinC/sodia/internal/core/ports"
 	"github.com/gin-gonic/gin"
 )
@@ -15,14 +19,41 @@ func NewAPIHandler(postService ports.PostService) *apiHandler {
 
 func (a *apiHandler) GetPosts(ctx *gin.Context) {
 
-	if userID := ctx.Query("userId"); len(userID) != 0 {
-		posts, err := a.postService.GetPostsByUserID(ctx.Request.Context(), userID)
-		if err != nil {
-			ctx.JSON(500, err.Error())
-		}
-		ctx.JSON(200, getPostsByUserIDResponse{toPostsDTO(posts)})
+	userID := ctx.Query("userId")
+	if len(userID) == 0 {
+		ctx.JSON(400, "missing user id")
 		return
 	}
 
-	ctx.JSON(400, "missing user id")
+	posts, err := a.postService.GetPostsByUserID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(200, getPostsByUserIDResponse{toPostsDTO(posts)})
+}
+
+func (a *apiHandler) CreatePosts(ctx *gin.Context) {
+
+	bodyReader, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	var reqBody createPostRequest
+	if err := json.Unmarshal(bodyReader, &reqBody); err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	post, err := a.postService.CreatePost(ctx.Request.Context(), domain.Post{
+		UserID:   reqBody.UserID,
+		Content:  reqBody.Content,
+		ImageURL: reqBody.ImageURL,
+	})
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ctx.JSON(200, createPostResponse{Post: toPostDTO(post)})
 }
