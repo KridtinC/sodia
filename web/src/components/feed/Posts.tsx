@@ -1,5 +1,6 @@
-import { Dispatch, useEffect } from "react"
+import { Dispatch, useEffect, useState } from "react"
 import { BiCommentDetail, BiLike, BiShareAlt } from "react-icons/bi"
+import { CgMore } from "react-icons/cg"
 import { PostsAction, PostsActionKind } from "."
 import { GetPosts } from "../../api/posts"
 import { Post } from "../../domain/entity/post"
@@ -30,7 +31,7 @@ export function Posts(props: IPostProps) {
             {
                 props.posts.length === 0 ? <p>loading...</p> :
                     props.posts.map((post: Post) => {
-                        return <PostContent key={post.id} post={post} />
+                        return <PostContent dispatch={props.dispatch} key={post.id} post={post} />
                     })
             }
         </div >
@@ -39,20 +40,37 @@ export function Posts(props: IPostProps) {
 
 interface IPostContentProps {
     post: Post
+    dispatch: Dispatch<PostsAction>
 }
 
 
 function PostContent(props: IPostContentProps) {
+
+    const [showOption, setShowOption] = useState(false)
+
     return (
         <div className="bg-zinc-700 rounded-md w-full h-auto flex flex-col">
             <div className="flex flex-col">
-                <div className="flex h-12 pt-3 px-4 mb-3">
-                    <div className="bg-zinc-600 rounded-2xl h-10 w-10 flex items-center justify-center p-1 mr-2">Pic</div>
-                    <div className="flex flex-col">
-                        <p className="text-left"><b>{props.post.user_id}</b></p>
-                        <span className="text-xs">{
-                            props.post.created_date
-                        }</span>
+                <div className="flex justify-between h-12 pt-3 px-4 mb-3">
+                    <div className="flex">
+                        <div className="bg-zinc-600 rounded-2xl h-10 w-10 flex items-center justify-center p-1 mr-2">Pic</div>
+                        <div className="flex flex-col">
+                            <p className="text-left"><b>{props.post.user_id}</b></p>
+                            <span className="text-xs">{
+                                props.post.created_date
+                            }</span>
+                        </div>
+                    </div>
+                    <div className="flex hover:cursor-pointer" onClick={() => setShowOption(true)} onBlur={() => setShowOption(false)}>
+                        <CgMore />
+                        <li className={`w-32 h-max relative bg-slate-600 ${showOption ? 'block' : 'hidden'}`}>
+                            <ul onClick={() => props.dispatch({
+                                payload: {
+                                    deletedPostID: props.post.id
+                                },
+                                type: PostsActionKind.DELETE
+                            })}>Delete</ul>
+                        </li>
                     </div>
                 </div>
                 <div className="px-4 pb-4 pt-1">
