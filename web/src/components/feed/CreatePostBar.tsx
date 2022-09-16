@@ -21,7 +21,6 @@ export function CreatePostBar(props: CreatePostBarProps) {
         e.preventDefault()
         let content = (e.currentTarget.elements.namedItem("content") as HTMLInputElement).value
         let post: Post = {
-            user_id: "test",
             content: content
         }
         post = await CreatePost(post)

@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/gin-gonic/gin v1.8.1
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/stretchr/testify v1.8.0 // indirect

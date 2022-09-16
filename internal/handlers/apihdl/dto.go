@@ -6,18 +6,23 @@ import (
 	"github.com/KridtinC/sodia/internal/core/domain"
 )
 
+type httpResponse struct {
+	Status       int         `json:"status"`
+	Data         interface{} `json:"data,omitempty"`
+	ErrorMessage string      `json:"error_message,omitempty"`
+}
+
 type createPostRequest struct {
-	UserID   string `json:"user_id,omitempty"`
 	Content  string `json:"content,omitempty"`
 	ImageURL string `json:"img_url,omitempty"`
 }
 
 type getPostsByUserIDResponse struct {
-	Posts []post `json:"posts,omitempty"`
+	Posts []post `json:"posts"`
 }
 
 type createPostResponse struct {
-	Post post `json:"post,omitempty"`
+	Post post `json:"post"`
 }
 
 type post struct {
@@ -30,8 +35,9 @@ type post struct {
 }
 
 func toPostsDTO(posts []domain.Post) (p []post) {
-	for _, dp := range posts {
-		p = append(p, toPostDTO(dp))
+	p = make([]post, len(posts))
+	for i, dp := range posts {
+		p[i] = toPostDTO(dp)
 	}
 	return
 }
@@ -44,5 +50,12 @@ func toPostDTO(dp domain.Post) post {
 		Content:     dp.Content,
 		ImageURL:    dp.ImageURL,
 		NoOfLiked:   dp.NoOfLiked,
+	}
+}
+
+func NewErrorResponse(status int, err error) httpResponse {
+	return httpResponse{
+		Status:       status,
+		ErrorMessage: err.Error(),
 	}
 }

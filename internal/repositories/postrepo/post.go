@@ -52,3 +52,14 @@ func (p *repository) CreatePost(ctx context.Context, post domain.Post) (domain.P
 	}
 	return post, nil
 }
+
+func (p *repository) DeletePost(ctx context.Context, postID string) error {
+	var postIDObj, err = primitive.ObjectIDFromHex(postID)
+	if err != nil {
+		return err
+	}
+	if _, err := p.dbCol.DeleteOne(ctx, bson.M{"_id": postIDObj}); err != nil {
+		return err
+	}
+	return nil
+}

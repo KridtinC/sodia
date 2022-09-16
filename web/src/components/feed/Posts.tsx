@@ -2,7 +2,7 @@ import { Dispatch, useEffect, useState } from "react"
 import { BiCommentDetail, BiLike, BiShareAlt } from "react-icons/bi"
 import { CgMore } from "react-icons/cg"
 import { PostsAction, PostsActionKind } from "."
-import { GetPosts } from "../../api/posts"
+import { DeletePost, GetPosts } from "../../api/posts"
 import { Post } from "../../domain/entity/post"
 
 interface IPostProps {
@@ -13,8 +13,8 @@ interface IPostProps {
 export function Posts(props: IPostProps) {
 
     useEffect(() => {
-        const fetchPosts = async (userID: string) => {
-            let posts = await GetPosts(userID)
+        const fetchPosts = async () => {
+            let posts = await GetPosts()
             props.dispatch({
                 type: PostsActionKind.GETS,
                 payload: {
@@ -23,7 +23,7 @@ export function Posts(props: IPostProps) {
             })
         }
 
-        fetchPosts("test")
+        fetchPosts()
     }, [])
 
     return (
@@ -48,6 +48,20 @@ function PostContent(props: IPostContentProps) {
 
     const [showOption, setShowOption] = useState(false)
 
+    const deletePost = async () => {
+        let success = await DeletePost(props.post.id!)
+        if (!success) {
+            alert("delete failed")
+            return
+        }
+        props.dispatch({
+            payload: {
+                deletedPostID: props.post.id
+            },
+            type: PostsActionKind.DELETE
+        })
+    }
+
     return (
         <div className="bg-zinc-700 rounded-md w-full h-auto flex flex-col">
             <div className="flex flex-col">
@@ -63,14 +77,9 @@ function PostContent(props: IPostContentProps) {
                     </div>
                     <div className="flex hover:cursor-pointer" onClick={() => setShowOption(true)} onBlur={() => setShowOption(false)}>
                         <CgMore />
-                        <li className={`w-32 h-max relative bg-slate-600 ${showOption ? 'block' : 'hidden'}`}>
-                            <ul onClick={() => props.dispatch({
-                                payload: {
-                                    deletedPostID: props.post.id
-                                },
-                                type: PostsActionKind.DELETE
-                            })}>Delete</ul>
-                        </li>
+                        <ul className={`w-32 h-max relative bg-slate-600 ${showOption ? 'block' : 'hidden'}`}>
+                            <li onClick={deletePost}>Delete</li>
+                        </ul>
                     </div>
                 </div>
                 <div className="px-4 pb-4 pt-1">

@@ -11,6 +11,8 @@ import (
 
 type config struct {
 	DatabaseURL string `envconfig:"DATABASE_URL"`
+
+	JWTSecret string `envconfig:"JWT_SECRET"`
 }
 
 var c config
